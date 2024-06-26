@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "@elysiajs/html": "^1.0.2",
+    "effect": "^3.4.3",
     "elysia": "latest"
   },
   "devDependencies": {
