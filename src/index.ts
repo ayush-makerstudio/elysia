@@ -1,7 +1,9 @@
 import { Elysia } from "elysia";
 import { html } from "@elysiajs/html";
 import { test, test2 } from "./controllers/user.controller";
+import swagger from "@elysiajs/swagger";
 const app = new Elysia()
+  .use(swagger())
   .get("/", () => "Hello Elysia")
   .group("/api", (api) =>
     api
