@@ -1,8 +1,6 @@
 import { Elysia } from "elysia";
 import { html } from "@elysiajs/html";
-import { Effect } from "effect";
-import { authenticateWithGoogle } from "./controllers/user.controller";
-
+import { test, test2 } from "./controllers/user.controller";
 const app = new Elysia()
   .get("/", () => "Hello Elysia")
   .group("/api", (api) =>
@@ -13,7 +11,8 @@ const app = new Elysia()
         () =>
           `<a href="http://localhost:4000/api/user/auth/google">Sign In with Google </a>`
       )
-      .get("/user/auth/google",async  () => authenticateWithGoogle)
+      .get("/test",test )
+      .get("/test2", test2)
   )
   .listen(4000);
 

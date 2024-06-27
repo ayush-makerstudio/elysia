@@ -1,23 +1,32 @@
 import { Effect } from "effect";
-
-export const authenticateWithGoogle = Effect.succeed(async () => {
-  try {
-    const response = await fetch("https://fakestoreapi.com/products");
-    if (!response.ok) {
-      throw new Error(`API call failed with status: ${response.status}`);
-    }
-    const data = await response.json();
-    return {message :"You are authenticated with google",data};
-  } catch (error) {
-    return Effect.fail(error);
-  }
-}).pipe(data => {
-      if(data instanceof Error) {
-            return {message: "Error", data: data.message}
-      }else {
-            
-           return  data.value()
-      }
+import { readFile as fsReadFile } from "fs";
+export function test() {
+  const user = Effect.succeed({
+    name: "ayush",
+    email: "www@dsa.com",
+  });
+  const tryme = (input: string) =>
+    Effect.try({
+      try: () => {
+        return JSON.parse(input);
+      },
+      catch: (unknown) => {
+        return new Error(`Somme error occured ${unknown}`);
+      },
+    });
+  const s = tryme("{");
+  return { try: Effect.runSync(s), user: Effect.runSync(user) };
 }
-) ;
 
+export function test2() {
+  const readFilePa = Effect.async<Buffer, NodeJS.ErrnoException>((cb) => {
+    fsReadFile("package.json", (err, data) => {
+      if (err) {
+        cb(Effect.fail(err));
+      } else {
+        cb(Effect.succeed(data));
+      }
+    });
+  });
+  return Effect.runPromise(readFilePa);
+}
