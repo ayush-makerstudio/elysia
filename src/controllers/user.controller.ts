@@ -11,7 +11,7 @@ export function test() {
         return JSON.parse(input);
       },
       catch: (unknown) => {
-        return new Error(`Somme error occured ${unknown}`);
+        return new Error(`Some error occured ${unknown}`);
       },
     });
   const s = tryme("{");
