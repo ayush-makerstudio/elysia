@@ -3,6 +3,7 @@ import { html } from "@elysiajs/html";
 import { test, test2 } from "./controllers/user.controller";
 import swagger from "@elysiajs/swagger";
 const app = new Elysia();
+import authRoutes from "./routes/auth.routes";
 
 app.use(swagger());
 app.get("/", () => "Hello Elysia");
@@ -17,6 +18,10 @@ app.group("/api", (api) =>
     .get("/test", test)
     .get("/test2", test2)
 );
+
+
+app.use(authRoutes)
+
 app.listen(4000);
 
 console.log(

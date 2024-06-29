@@ -5,7 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "bun run --watch src/index.ts",
-    "db:generate": "drizzle-kit generate", 
+    "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push"
   },
@@ -16,9 +16,11 @@
     "@neondatabase/serverless": "^0.9.4",
     "drizzle-orm": "^0.31.2",
     "effect": "^3.4.3",
-    "elysia": "latest"
+    "elysia": "latest",
+    "passport": "^0.7.0"
   },
   "devDependencies": {
+    "@types/passport": "^1.0.16",
     "bun-types": "latest",
     "drizzle-kit": "^0.22.7"
   },
