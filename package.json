@@ -11,17 +11,19 @@
   },
   "dependencies": {
     "@effect/core": "^0.0.16",
+    "@elysiajs/cookie": "^0.8.0",
     "@elysiajs/html": "^1.0.2",
     "@elysiajs/swagger": "^1.0.5",
     "@neondatabase/serverless": "^0.9.4",
     "@types/passport-google-oauth2": "^0.1.8",
+    "@workos-inc/node": "^7.11.3",
     "axios": "^1.7.2",
+    "dotenv": "^16.4.5",
     "drizzle-orm": "^0.31.2",
     "effect": "^3.4.3",
     "elysia": "latest",
-    "passport": "^0.7.0",
-    "passport-google-oauth2": "^0.2.0",
-    "querystring": "^0.2.1"
+    "iron-session": "^8.0.2",
+    "jose": "^5.6.2"
   },
   "devDependencies": {
     "@types/passport": "^1.0.16",

@@ -1,11 +1,24 @@
-import { Elysia } from "elysia";
+import { Cookie, Elysia, redirect } from "elysia";
 import { html } from "@elysiajs/html";
 import { test, test2 } from "./controllers/user.controller";
 import swagger from "@elysiajs/swagger";
 const app = new Elysia();
 import authRoutes from "./routes/auth.routes";
+import { Effect } from "effect";
+import { WorkOS } from "@workos-inc/node";
+import db from "./lib/db";
+import { users } from "./lib/db/schema";
+import dotenv from "dotenv";
+import { sealData } from "iron-session";
+import { cookie } from "@elysiajs/cookie";
+import { eq } from "drizzle-orm";
+dotenv.config();
+const workos = new WorkOS(Bun.env.WORKOS_API_KEY as string);
+const WORKOS_CLIENT_ID = Bun.env.WORKOS_CLIENT_ID as string;
 
 app.use(swagger());
+app.use(cookie());
+
 app.get("/", () => "Hello Elysia");
 app.group("/api", (api) =>
   api
@@ -19,8 +32,57 @@ app.group("/api", (api) =>
     .get("/test2", test2)
 );
 
+app.use(authRoutes);
+app.get("/callback", ({ cookie: { name }, query }) => {
+  const program = Effect.tryPromise<Object, Error>({
+    try: async () => {
+      const code = query.code as string;
+      const { user, accessToken, refreshToken, impersonator } =
+        await workos.userManagement.authenticateWithCode({
+          code,
+          clientId: WORKOS_CLIENT_ID,
+        });
+      const encryptedSession = await sealData(
+        { accessToken, refreshToken, user, impersonator },
+        { password: process.env.WORKOS_COOKIE_PASSWORD as string }
+      );
+      name.value = "wos-session";
+      name.value = encryptedSession;
+      name.path = "/";
+      name.httpOnly = true;
+      name.secure = true;
+      name.sameSite = "lax";
+      let existingUser = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, user.email))
+        .execute();
 
-app.use(authRoutes)
+      if (existingUser) {
+        return { savedUser: existingUser };
+      }
+
+      const savedUser = await db
+        .insert(users)
+        .values({
+          id: user.id,
+          email: user.email,
+          first_name: user.firstName,
+          last_name: user.lastName,
+          role: "user",
+        })
+        .returning();
+
+      return { savedUser };
+    },
+    catch: (err) => {
+      name.remove();
+      throw Error(`Some error occured ${err}`);
+    },
+  });
+
+  return Effect.runPromise(program);
+});
 
 app.listen(4000);
 
