@@ -1,14 +1,14 @@
 import Elysia, { redirect } from "elysia";
-import { callback, login } from "../controllers/auth.controllers";
-import { WorkOS } from "@workos-inc/node";
-const workos = new WorkOS(Bun.env.WORKOS_API_KEY as string);
+import {  login, protectedRoute } from "../controllers/auth.controllers";
+import { authMiddleware } from "../middleware/auth.middleware";
 export default new Elysia({ name: "auth" }).group("/auth", (app) => {
   app.get("/login", login);
-  
-  app.get(
-    "/callback",
-    callback
-  );
 
+
+  app.get("/p",  protectedRoute,  {
+    beforeHandle: authMiddleware
+  });
+
+  app.get("/protected" , protectedRoute)
   return app;
 });

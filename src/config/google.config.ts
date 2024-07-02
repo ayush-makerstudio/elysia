@@ -1,7 +1,6 @@
 import axios from "axios";
 
 export function getGoogleConsentUrl(): string {
-  console.log(Bun.env.CLIENT_ID);
   const rootUrl = "https://accounts.google.com/o/oauth2/v2/auth";
   const options = {
     redirect_uri: "http://localhost:4000/auth/google/callback",
@@ -15,7 +14,6 @@ export function getGoogleConsentUrl(): string {
       "https://www.googleapis.com/auth/userinfo.email",
     ].join(" "),
   };
-  console.log(options);
   return `${rootUrl}?${new URLSearchParams(options)}`;
 }
 
@@ -53,7 +51,6 @@ function getTokens({
     })
     .then((res) => res.data)
     .catch((error) => {
-      console.error(`Failed to fetch auth tokens`);
       throw new Error(error.message);
     });
 }

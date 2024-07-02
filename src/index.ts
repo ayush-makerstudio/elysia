@@ -33,7 +33,7 @@ app.group("/api", (api) =>
 );
 
 app.use(authRoutes);
-app.get("/callback", ({ cookie: { name }, query }) => {
+app.get("/callback", ({ cookie: { wos }, query }) => {
   const program = Effect.tryPromise<Object, Error>({
     try: async () => {
       const code = query.code as string;
@@ -46,19 +46,19 @@ app.get("/callback", ({ cookie: { name }, query }) => {
         { accessToken, refreshToken, user, impersonator },
         { password: process.env.WORKOS_COOKIE_PASSWORD as string }
       );
-      name.value = "wos-session";
-      name.value = encryptedSession;
-      name.path = "/";
-      name.httpOnly = true;
-      name.secure = true;
-      name.sameSite = "lax";
+      
+      wos.value= encryptedSession;
+      wos.path = "/";
+      wos.httpOnly = true;
+      wos.secure = true;
+      wos.sameSite = "lax";
       let existingUser = await db
         .select()
         .from(users)
         .where(eq(users.email, user.email))
         .execute();
 
-      if (existingUser) {
+      if (existingUser.length>0) {
         return { savedUser: existingUser };
       }
 
@@ -73,10 +73,10 @@ app.get("/callback", ({ cookie: { name }, query }) => {
         })
         .returning();
 
-      return { savedUser };
+      return {"user" :  savedUser };
     },
     catch: (err) => {
-      name.remove();
+      wos.remove();
       throw Error(`Some error occured ${err}`);
     },
   });
